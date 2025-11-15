@@ -12,11 +12,12 @@ model_path = os.path.join(BASE_DIR, "models")
 lr_model = load(os.path.join(model_path, "linear_model.pkl"))
 
 
-# ---- Авторизация GEE ----
-service_account = "my-bot-service@cogent-sunspot-472315-q5.iam.gserviceaccount.com"
-key_path = os.path.join(os.path.dirname(__file__), "..", "key.json")
-credentials = ee.ServiceAccountCredentials(service_account, key_path)
-ee.Initialize(credentials)
+# Load variables from .env
+load_dotenv()
+
+service_account = os.getenv("EE_SERVICE_ACCOUNT")
+key_path = os.getenv("EE_KEY_PATH")
+
 
 @csrf_exempt
 def home(request):
@@ -94,7 +95,7 @@ def home(request):
                 )
             )
 
-            # === Автоматически извлекаем коэффициенты ===
+            # === Automatically extract coefficients ===
             coef_dict = {name: coef for name, coef in zip(lr_model.feature_names_in_, lr_model.coef_)}
             intercept = lr_model.intercept_
 
@@ -102,7 +103,7 @@ def home(request):
             for k, v in coef_dict.items():
                 print(f"{k}: {v}")
 
-            # === Привязка GEE изображений к именам признаков ===
+            # === Linking GEE images to feature names ===
             feature_imgs = {
                 "NDVI": ndvi_mean,
                 "sm_surface": sm_mean,
@@ -112,8 +113,8 @@ def home(request):
                 "wind_speed": wind
             }
 
-            # === Генерация выражения автоматически ===
-            # создаём выражение для каждого признака
+            # === Generating expressions automatically ===
+            # create an expression for each feature
             risk_img = ee.Image.constant(intercept)
             for name, coef in coef_dict.items():
                 img = feature_imgs.get(name)
@@ -122,7 +123,7 @@ def home(request):
                 else:
                     print(f"⚠️ Warning: feature {name} not found in GEE images!")
 
-            # === Нормализация для визуализации ===
+            # === Normalization for visualization ===
             risk_scaled = risk_img.unitScale(
                 ee.Number(risk_img.reduceRegion(reducer=ee.Reducer.min(), geometry=polygon, scale=1000).values().reduce(ee.Reducer.min())),
                 ee.Number(risk_img.reduceRegion(reducer=ee.Reducer.max(), geometry=polygon, scale=1000).values().reduce(ee.Reducer.max()))
@@ -204,3 +205,4 @@ def get_data(request):
     except Exception as e:
         traceback.print_exc()
         return JsonResponse({"error": str(e)}, status=500)
+
