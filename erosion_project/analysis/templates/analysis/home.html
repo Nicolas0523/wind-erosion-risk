@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -184,3 +185,191 @@
     </script>
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Wind Erosion Risk Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css"/>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-draw/dist/leaflet.draw.js"></script>
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        #map { height: 100vh; width: 100%; }
+
+        #control-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px 14px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            width: 220px;
+        }
+
+        .legend {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            z-index: 10000;
+            font-family: sans-serif;
+            font-size: 14px;
+        }
+        .legend h4 { margin: 0 0 8px; text-align: center; font-weight: 600; }
+        .legend div { margin: 4px 0; }
+        .legend span {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 6px;
+            border-radius: 3px;
+        }
+        label {
+            display: block;
+            margin-top: 6px;
+            font-weight: bold;
+        }
+        select, input[type="date"], button {
+            width: 100%;
+            margin-top: 4px;
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="control-panel">
+        <label>Model:</label>
+        <select id="model">
+            <option value="linear">Linear Regression</option>
+        </select>
+
+        <label>Start date</label>
+        <input type="date" id="startDate" value="2024-06-01">
+
+        <label>End date</label>
+        <input type="date" id="endDate" value="2024-09-01">
+
+        <button id="analyzeBtn">Analyze</button>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="legend">
+        <h4>🌪 Risk Levels</h4>
+        <div><span style="background:green"></span> Low</div>
+        <div><span style="background:yellow"></span> Medium</div>
+        <div><span style="background:red"></span> High</div>
+    </div>
+
+    <script>
+        const map = L.map('map').setView([44.85, 65.5], 7);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        const drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
+
+        const drawControl = new L.Control.Draw({
+            edit: { featureGroup: drawnItems },
+            draw: { polygon: true, rectangle: true, marker: false, circle: false, polyline: false, circlemarker: false }
+        });
+        map.addControl(drawControl);
+
+        let selectedPolygon = null;
+
+        map.on(L.Draw.Event.CREATED, function (e) {
+            drawnItems.clearLayers();
+            selectedPolygon = e.layer;
+            drawnItems.addLayer(selectedPolygon);
+        });
+
+        document.getElementById("analyzeBtn").addEventListener("click", () => {
+            if (!selectedPolygon) {
+                alert("At first select polygon");
+                return;
+            }
+
+            const btn = document.getElementById("analyzeBtn");
+            btn.disabled = true;
+            btn.innerText = "⏳ Analyzing...";
+
+            const geojson = selectedPolygon.toGeoJSON();
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById("endDate").value;
+            const model = document.getElementById("model").value;
+
+            fetch("/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    geometry: geojson.geometry,
+                    start_date: start,
+                    end_date: end,
+                    model: model
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerText = "Analyze";
+
+                if (data.error) {
+                    alert("Ошибка: " + data.error);
+                } else {
+                    if (window.riskLayer) map.removeLayer(window.riskLayer);
+                    window.riskLayer = L.tileLayer(data.tile_url, { attribution: "Earth Engine" }).addTo(map);
+                    alert("✅ Анализ завершён — слой добавлен!");
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerText = "Analyze";
+                alert("Server error: " + err);
+            });
+        });
+
+        map.on("click", function(e) {
+            const lat = e.latlng.lat;
+            const lon = e.latlng.lng;
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+
+            fetch(`/get_data/?lat=${lat}&lon=${lon}&start=${start}&end=${end}`)
+                .then(res => res.json())
+                .then(data => {
+                    const riskColor = data.risk === "High" ? "red" : (data.risk === "Medium" ? "yellow" : "green");
+                    const popupContent = `
+                        <div style="border-left: 4px solid ${riskColor}; padding: 8px;">
+                            <b>📍 Координаты:</b> ${lat.toFixed(3)}, ${lon.toFixed(3)}<br>
+                            <b>🌱 NDVI:</b> ${data.ndvi ?? "n/a"}<br>
+                            <b>💨 Ветер:</b> ${data.wind ?? "n/a"} м/с<br>
+                            <b>💧 Влажность:</b> ${data.soil_moisture ?? "n/a"}<br>
+                            <b>⚡ Риск:</b> <span style="color:${riskColor}; font-weight:600">${data.risk}</span>
+                        </div>
+                    `;
+                    L.popup().setLatLng(e.latlng).setContent(popupContent).openOn(map);
+                })
+                .catch(err => console.error("Popup error:", err));
+        });
+    </script>
+</body>
+</html>
+>>>>>>> 39381e6 (Update GEE code for Render)
