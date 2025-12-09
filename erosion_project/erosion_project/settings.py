@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+
 """
 Django settings for erosion_project project.
 
