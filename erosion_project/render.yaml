@@ -5,4 +5,4 @@ services:
     # Указываем версию Python, которую нужно использовать
     pythonVersion: 3.11.9 
     buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
-    startCommand: "gunicorn erosion_project.wsgi"
+    startCommand: "gunicorn erosion_project.wsgi --timeout 120"
