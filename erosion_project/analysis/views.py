@@ -4,10 +4,8 @@ import ee, os, json, traceback
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from joblib import load
-import os
 import numpy as np
 from dotenv import load_dotenv
-import json
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

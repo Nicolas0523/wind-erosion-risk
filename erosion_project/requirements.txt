@@ -1,10 +1,14 @@
-json
-numpy
-ee
-os
-traceback
-joblib
-dotenv
-django 
-pandas
-scikit-learn
+# --- Django и Производственный Сервер ---
+Django==5.0.0  # Укажите вашу версию
+gunicorn==22.0.0
+psycopg2-binary==2.9.9
+whitenoise==6.6.0
+
+# --- Core Libraries ---
+numpy==1.26.4
+pandas==2.2.2
+scikit-learn==1.4.2
+joblib==1.4.0
+
+# --- Инструменты Google Earth Engine (GEE) ---
+earthengine-api==0.1.411
