@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """
 ASGI config for erosion_project project.
 
@@ -15,7 +14,6 @@ from django.core.asgi import get_asgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'erosion_project.settings')
 
 application = get_asgi_application()
-=======
 """
 ASGI config for erosion_project project.
 
@@ -32,4 +30,3 @@ from django.core.asgi import get_asgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'erosion_project.settings')
 
 application = get_asgi_application()
->>>>>>> 39381e6 (Update GEE code for Render)

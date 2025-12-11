@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import json
 import joblib
 import pandas as pd
@@ -71,7 +70,8 @@ for name, coef in zip(features, lr.coef_):
 os.makedirs("models", exist_ok=True)
 joblib.dump(lr, "models/linear_model.pkl")
 joblib.dump(rf, "models/forest_model.pkl")
-=======
+
+
 import json
 import joblib
 import pandas as pd
@@ -144,4 +144,3 @@ for name, coef in zip(features, lr.coef_):
 os.makedirs("models", exist_ok=True)
 joblib.dump(lr, "models/linear_model.pkl")
 joblib.dump(rf, "models/forest_model.pkl")
->>>>>>> 39381e6 (Update GEE code for Render)

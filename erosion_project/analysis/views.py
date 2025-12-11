@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from django.shortcuts import render
 import ee, os, json, traceback
 from django.http import JsonResponse
@@ -229,7 +228,7 @@ def get_data(request):
     except Exception as e:
         traceback.print_exc()
         return JsonResponse({"error": str(e)}, status=500)
-=======
+
 from django.shortcuts import render
 import ee, os, json, traceback
 from django.http import JsonResponse
@@ -447,4 +446,4 @@ def get_data(request):
     except Exception as e:
         traceback.print_exc()
         return JsonResponse({"error": str(e)}, status=500)
->>>>>>> 39381e6 (Update GEE code for Render)
+
