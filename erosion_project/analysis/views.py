@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from joblib import load
 import numpy as np
-from dotenv import load_dotenv
+
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -12,7 +12,7 @@ model_path = os.path.join(BASE_DIR, "models")
 
 lr_model = load(os.path.join(model_path, "linear_model.pkl"))
 
-load_dotenv()
+
 
 # Read env vars
 service_account = os.getenv("EE_SERVICE_ACCOUNT")
@@ -235,7 +235,6 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from joblib import load
 import numpy as np
-from dotenv import load_dotenv
 from tempfile import NamedTemporaryFile
 
 
@@ -446,4 +445,5 @@ def get_data(request):
     except Exception as e:
         traceback.print_exc()
         return JsonResponse({"error": str(e)}, status=500)
+
 
