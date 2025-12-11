@@ -7,7 +7,6 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score, mean_absolute_error
 import os
 
-load_dotenv()
 
 service_account = os.getenv("GEE_SERVICE_ACCOUNT")
 key_path = os.getenv("GEE_KEY_PATH")
@@ -81,7 +80,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score, mean_absolute_error
 import os
 
-load_dotenv()
+
 
 service_account = os.getenv("GEE_SERVICE_ACCOUNT")
 key_path = os.getenv("GEE_KEY_PATH")
@@ -144,3 +143,4 @@ for name, coef in zip(features, lr.coef_):
 os.makedirs("models", exist_ok=True)
 joblib.dump(lr, "models/linear_model.pkl")
 joblib.dump(rf, "models/forest_model.pkl")
+
