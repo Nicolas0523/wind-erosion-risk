@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from joblib import load
 import numpy as np
-from dotenv import load_dotenv
+
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -15,6 +15,7 @@ lr_model = load(os.path.join(model_path, "linear_model.pkl"))
 # Получаем две части ключа из переменных окружения Render
 GEE_SERVICE_ACCOUNT = os.environ.get('GEE_SERVICE_ACCOUNT')
 GEE_PRIVATE_KEY = os.environ.get('GEE_PRIVATE_KEY')
+
 
 if GEE_SERVICE_ACCOUNT and GEE_PRIVATE_KEY:
     try:
@@ -225,7 +226,6 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from joblib import load
 import numpy as np
-from dotenv import load_dotenv
 from tempfile import NamedTemporaryFile
 
 
@@ -436,4 +436,5 @@ def get_data(request):
     except Exception as e:
         traceback.print_exc()
         return JsonResponse({"error": str(e)}, status=500)
+
 
