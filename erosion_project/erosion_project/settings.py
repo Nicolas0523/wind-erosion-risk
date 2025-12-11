@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 """
 Django settings for erosion_project project.
 
@@ -137,8 +135,6 @@ STORAGES = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-=======
 """
 Django settings for erosion_project project.
 
@@ -268,4 +264,3 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
->>>>>>> 39381e6 (Update GEE code for Render)
