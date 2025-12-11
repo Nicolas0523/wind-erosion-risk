@@ -12,34 +12,24 @@ model_path = os.path.join(BASE_DIR, "models")
 
 lr_model = load(os.path.join(model_path, "linear_model.pkl"))
 
-load_dotenv()
+# Получаем две части ключа из переменных окружения Render
+GEE_SERVICE_ACCOUNT = os.environ.get('GEE_SERVICE_ACCOUNT')
+GEE_PRIVATE_KEY = os.environ.get('GEE_PRIVATE_KEY')
 
-# Read env vars
-service_account = os.getenv("EE_SERVICE_ACCOUNT")
-key_path = os.getenv("EE_KEY_PATH")
-
-print("SERVICE_ACCOUNT:", service_account)
-print("KEY_PATH:", key_path)
-print("FILE EXISTS:", os.path.exists(key_path))
-
-# Debug: check key correctness
-print("DEBUG: reading key file...")
-try:
-    with open(key_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    print("DEBUG: key file successfully read.")
-    print("DEBUG: key type:", data.get("type"))
-    print("DEBUG: client_email:", data.get("client_email"))
-except Exception as e:
-    print("DEBUG: error reading key:", e)
-
-# Initialize GEE
-try:
-    credentials = ee.ServiceAccountCredentials(service_account, key_path)
-    ee.Initialize(credentials)
-    print("✅ GEE connected successfully!")
-except Exception as e:
-    print("❌ Error initializing GEE:", e)
+if GEE_SERVICE_ACCOUNT and GEE_PRIVATE_KEY:
+    try:
+        # Инициализация GEE с передачей ключа как строковых данных (key_data)
+        credentials = ee.ServiceAccountCredentials(
+            GEE_SERVICE_ACCOUNT,
+            key_data=GEE_PRIVATE_KEY 
+        )
+        ee.Initialize(credentials=credentials)
+        print("INFO: GEE initialized successfully via service account credentials.")
+    except Exception as e:
+        print(f"ERROR: Failed to initialize GEE: {e}")
+else:
+    # Ваше приложение упадет, если GEE_SERVICE_ACCOUNT или GEE_PRIVATE_KEY не установлены на Render
+    print("WARNING: GEE service account credentials not found. Check Render Environment Variables.")
 
 
 @csrf_exempt
