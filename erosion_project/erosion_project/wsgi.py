@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """
 WSGI config for erosion_project project.
 
@@ -33,4 +32,3 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'erosion_project.settings')
 
 application = get_wsgi_application()
->>>>>>> 39381e6 (Update GEE code for Render)
