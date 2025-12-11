@@ -6,7 +6,7 @@ whitenoise==6.6.0
 
 # --- Core Libraries ---
 numpy==1.26.4
-pandas==2.2.2
+pandas==2.1.4
 scikit-learn==1.4.2
 joblib==1.4.0
 
